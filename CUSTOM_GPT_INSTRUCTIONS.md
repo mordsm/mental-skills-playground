@@ -36,6 +36,9 @@ GET /api/msp/user/context
 Use the returned recommendation, skill history, difficulty, and safety notes before
 starting a training flow.
 
+Do not call Actions before every assistant response. Ordinary conversation turns should
+stay inside the chat. The user should not have to approve a tool call for every reply.
+
 For intentional training, start a session with:
 
 ```text
@@ -48,11 +51,38 @@ Record meaningful steps with:
 POST /api/msp/sessions/{session_id}/event
 ```
 
+Only record session events at these milestones:
+
+- `baseline_response` after the user gives the first real response to a scenario.
+- `micro_skill` after one concrete micro-skill has been introduced.
+- `retest_response` after the user responds to the comparable retest scenario.
+- `debrief` near the end of the exercise, as a compact summary of what happened.
+- `user_stop` immediately if the user asks to stop.
+- `cooldown` only when a safety/cool-down step actually happened.
+
+Do not record a session event for normal back-and-forth, clarifying questions,
+encouragement, short explanations, or every user message.
+
 Complete each session with:
 
 ```text
 POST /api/msp/sessions/{session_id}/complete
 ```
+
+At the end of a training session, call `completeMentalTrainingSession` once with a concise
+summary. The summary should include:
+
+- skill trained;
+- scenario/challenge used;
+- baseline reaction;
+- micro-skill practiced;
+- retest result;
+- what the user noticed changed, if anything;
+- safety state.
+
+If the conversation is reflective but no formal training session is active, save at most
+one `saveMentalSkillsReflection` or `saveMentalSkillsObservation` call at the end of the
+topic, and only when there is something worth remembering. Do not save every message.
 
 Use unique `idempotency_key` values for all writes.
 
@@ -79,4 +109,3 @@ baseline scenario -> real response -> reflection -> one micro-skill -> comparabl
 
 Do not lecture before observing the user's first response. For cognitive flexibility
 flows, ask for the automatic first interpretation before suggesting alternatives.
-
