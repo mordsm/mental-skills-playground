@@ -79,4 +79,3 @@ Future integration should be API-based:
 - Compass asks for training status or recommendation.
 - Mental Skills Playground owns sessions, progress, exercises, safety state, and skill history.
 - Compass does not directly mutate mental-skills internal data except through approved API contracts.
-
