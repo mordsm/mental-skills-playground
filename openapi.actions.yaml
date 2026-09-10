@@ -1,0 +1,231 @@
+openapi: 3.1.0
+info:
+  title: Mental Skills Playground Actions
+  version: 0.1.0
+servers:
+  - url: http://localhost:8010
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    StartSessionRequest:
+      type: object
+      required: [idempotency_key, skill_id]
+      properties:
+        idempotency_key: { type: string }
+        user_id: { type: string, default: moshe }
+        skill_id: { type: string }
+        exercise_id: { type: string, nullable: true }
+        mode:
+          type: string
+          enum: [TRAINING_MODE, FIELD_MODE]
+          default: TRAINING_MODE
+        difficulty:
+          type: integer
+          minimum: 1
+          maximum: 2
+          default: 1
+    RecordSessionEventRequest:
+      type: object
+      required: [idempotency_key, event_type, occurred_at]
+      properties:
+        idempotency_key: { type: string }
+        event_type:
+          type: string
+          enum: [baseline_response, reflection, micro_skill, retest_response, debrief, user_stop, cooldown]
+        occurred_at: { type: string, format: date-time }
+        payload:
+          type: object
+          additionalProperties: true
+    CompleteSessionRequest:
+      type: object
+      required: [idempotency_key, summary]
+      properties:
+        idempotency_key: { type: string }
+        summary: { type: string }
+        user_noticed_change: { type: boolean, default: false }
+        safety_state: { type: string, default: ok }
+    SaveObservationRequest:
+      type: object
+      required: [idempotency_key, content]
+      properties:
+        idempotency_key: { type: string }
+        user_id: { type: string, default: moshe }
+        content: { type: string }
+        skill_id: { type: string, nullable: true }
+        occurred_at: { type: string, format: date-time, nullable: true }
+        source: { type: string, default: gpt }
+        tags:
+          type: array
+          items: { type: string }
+    SaveReflectionRequest:
+      type: object
+      required: [idempotency_key, content]
+      properties:
+        idempotency_key: { type: string }
+        user_id: { type: string, default: moshe }
+        content: { type: string }
+        session_id: { type: string, nullable: true }
+        skill_id: { type: string, nullable: true }
+        insight_tags:
+          type: array
+          items: { type: string }
+security:
+  - bearerAuth: []
+paths:
+  /api/health:
+    get:
+      operationId: getHealth
+      responses:
+        "200":
+          description: Health status
+  /api/msp/user/context:
+    get:
+      operationId: getMentalSkillsUserContext
+      parameters:
+        - name: user_id
+          in: query
+          schema: { type: string, default: moshe }
+      responses:
+        "200":
+          description: Current user training context
+  /api/msp/user/profile:
+    get:
+      operationId: getMentalSkillsUserProfile
+      parameters:
+        - name: user_id
+          in: query
+          schema: { type: string, default: moshe }
+      responses:
+        "200":
+          description: User profile
+  /api/msp/skills:
+    get:
+      operationId: listMentalSkills
+      parameters:
+        - name: user_id
+          in: query
+          schema: { type: string, default: moshe }
+      responses:
+        "200":
+          description: Active skills
+  /api/msp/skills/{skill_id}/history:
+    get:
+      operationId: getMentalSkillHistory
+      parameters:
+        - name: skill_id
+          in: path
+          required: true
+          schema: { type: string }
+        - name: user_id
+          in: query
+          schema: { type: string, default: moshe }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 10, minimum: 1, maximum: 50 }
+      responses:
+        "200":
+          description: Skill history
+  /api/msp/training/recommendation:
+    get:
+      operationId: getMentalTrainingRecommendation
+      parameters:
+        - name: user_id
+          in: query
+          schema: { type: string, default: moshe }
+      responses:
+        "200":
+          description: Training recommendation
+  /api/msp/sessions/start:
+    post:
+      operationId: startMentalTrainingSession
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StartSessionRequest"
+      responses:
+        "200":
+          description: Started session
+  /api/msp/sessions/{session_id}/event:
+    post:
+      operationId: recordMentalTrainingSessionEvent
+      parameters:
+        - name: session_id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RecordSessionEventRequest"
+      responses:
+        "200":
+          description: Recorded session event
+  /api/msp/sessions/{session_id}/complete:
+    post:
+      operationId: completeMentalTrainingSession
+      parameters:
+        - name: session_id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompleteSessionRequest"
+      responses:
+        "200":
+          description: Completed session
+  /api/msp/observations:
+    post:
+      operationId: saveMentalSkillsObservation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SaveObservationRequest"
+      responses:
+        "200":
+          description: Saved observation
+  /api/msp/patterns:
+    get:
+      operationId: getMentalSkillsPatterns
+      parameters:
+        - name: user_id
+          in: query
+          schema: { type: string, default: moshe }
+      responses:
+        "200":
+          description: Early patterns
+  /api/msp/reflection:
+    post:
+      operationId: saveMentalSkillsReflection
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SaveReflectionRequest"
+      responses:
+        "200":
+          description: Saved reflection
+  /api/msp/progress:
+    get:
+      operationId: getMentalSkillsProgress
+      parameters:
+        - name: user_id
+          in: query
+          schema: { type: string, default: moshe }
+      responses:
+        "200":
+          description: Progress summary
+
