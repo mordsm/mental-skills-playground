@@ -3,7 +3,7 @@ info:
   title: Mental Skills Playground Actions
   version: 0.1.0
 servers:
-  - url: http://localhost:8010
+  - url: https://sean-womens-expect-fishing.trycloudflare.com
 components:
   securitySchemes:
     bearerAuth:

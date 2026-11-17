@@ -40,8 +40,22 @@ MVP_EXERCISES: list[dict[str, Any]] = [
         "max_difficulty": 2,
         "micro_skill": "wait_three_seconds",
         "templates": {
-            "baseline": "A message arrives that feels slightly unfair. What is your first impulse?",
-            "retest": "A similar message arrives. Try a three-second pause before choosing your response.",
+            "baseline": "מגיעה הודעה שמרגישה טיפה לא הוגנת או מעצבנת. מה הדחף האוטומטי הראשון שלך?",
+            "retest": "מגיעה הודעה דומה. נסה לעצור בדיוק 3 שניות של שקט מוחלט לפני שאתה בוחר כיצד להגיב.",
+        },
+        "safety_tags": ["low_intensity", "stop_available"],
+    },
+    {
+        "exercise_id": "pause_procrastination_urge",
+        "skill_id": "PAUSE",
+        "mode": "TRAINING_MODE",
+        "challenge_type": "urge_surfing",
+        "min_difficulty": 1,
+        "max_difficulty": 2,
+        "micro_skill": "ten_second_posture_reset",
+        "templates": {
+            "baseline": "אתה מתחיל משימה מורכבת ומיד עולה דחף לפתוח לשונית חדשה או לבדוק את הטלפון. מה קורה בגוף ובמחשבה?",
+            "retest": "הדחף מופיע שוב. הנח ידיים על הברכיים, קח 10 שניות של איפוס יציבה ונשימה אחת מלאה, ואז בחר אם להמשיך.",
         },
         "safety_tags": ["low_intensity", "stop_available"],
     },
@@ -54,8 +68,22 @@ MVP_EXERCISES: list[dict[str, Any]] = [
         "max_difficulty": 2,
         "micro_skill": "reset_and_continue",
         "templates": {
-            "baseline": "A small task changes after you already started. What happens first?",
-            "retest": "The instruction changes again. Try one reset breath, then choose the next step.",
+            "baseline": "התחלת משימה לפי הנחיה מסוימת, ופתאום ההנחיה משתנה או שצריך לעשות הכל מהתחלה. מה התגובה הראשונית?",
+            "retest": "ההנחיה השתנתה שוב. נסה נשיפת שחרור איטית אחת (Exhale Reset), אמור לעצמך 'זה חלק מהתהליך', ובחר בצעד הבא.",
+        },
+        "safety_tags": ["low_intensity", "stop_available"],
+    },
+    {
+        "exercise_id": "frustration_technical_glitch",
+        "skill_id": "FRUSTRATION_TOLERANCE",
+        "mode": "TRAINING_MODE",
+        "challenge_type": "unexpected_error",
+        "min_difficulty": 1,
+        "max_difficulty": 3,
+        "micro_skill": "hands_off_keyboard",
+        "templates": {
+            "baseline": "סקריפט או מערכת שעבדה מקודם נתקעת וזורקת שגיאה אדומה. מה האימפולס המיידי?",
+            "retest": "שגיאה מופיעה שוב. הרם ידיים מהמקלדת למשך 5 שניות, קרא רק את השורה האחרונה של הודעת השגיאה, ונסח השערה אחת רגועה.",
         },
         "safety_tags": ["low_intensity", "stop_available"],
     },
@@ -68,8 +96,22 @@ MVP_EXERCISES: list[dict[str, Any]] = [
         "max_difficulty": 2,
         "micro_skill": "slow_exhale_notice_change",
         "templates": {
-            "baseline": "Pause and notice: what is happening in your body right now?",
-            "retest": "After one slow exhale, what changed, even a little?",
+            "baseline": "עצור לרגע ובדוק: מה קורה בגוף שלך כרגע? (כתפיים מכווצות? נשימה קצרה? מתח בלסת?)",
+            "retest": "בצע נשיפה איטית וממושכת דרך הפה, כאילו אתה מכבה נר לאט. מה השתנה בתחושת הגוף, אפילו מעט?",
+        },
+        "safety_tags": ["low_intensity", "stop_available"],
+    },
+    {
+        "exercise_id": "arousal_box_breathing",
+        "skill_id": "AROUSAL_REGULATION",
+        "mode": "TRAINING_MODE",
+        "challenge_type": "calm_down_protocol",
+        "min_difficulty": 1,
+        "max_difficulty": 3,
+        "micro_skill": "box_breathing_4x4",
+        "templates": {
+            "baseline": "אתה מרגיש אי-שקט או קצב לב מעט מוגבר לפני משימה או שיחה. כמה רמת העוררות מ-1 עד 5?",
+            "retest": "בצע מחזור אחד של נשימת ריבוע: שאיפה ל-4 שניות, עצירה ל-4, נשיפה ל-4, עצירה ל-4. דרג כעת את רמת העוררות.",
         },
         "safety_tags": ["low_intensity", "stop_available"],
     },
@@ -119,7 +161,7 @@ class MentalSkillsService:
             for exercise in MVP_EXERCISES:
                 conn.execute(
                     """
-                    insert or ignore into msp_exercises
+                    insert or replace into msp_exercises
                     (exercise_id, skill_id, mode, challenge_type, min_difficulty, max_difficulty,
                      micro_skill, templates_json, safety_tags_json, status)
                     values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)

@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mental Skills Playground | מערכת אימון מנטלי וביופידבק רב-חיישני</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card-bg: #161b22;
+      --card-border: #30363d;
+      --text: #c9d1d9;
+      --text-bright: #f0f6fc;
+      --text-muted: #8b949e;
+      --primary: #58a6ff;
+      --primary-hover: #79c0ff;
+      --accent: #bc8cff;
+      --green: #3fb950;
+      --yellow: #d29922;
+      --red: #f85149;
+      --radius: 12px;
+      --font: 'Assistant', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 24px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .header-title h1 {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--text-bright);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-title p {
+      color: var(--text-muted);
+      font-size: 15px;
+      margin-top: 4px;
+    }
+
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(63, 185, 80, 0.15);
+      color: var(--green);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid rgba(63, 185, 80, 0.3);
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      background: var(--green);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--green);
+    }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .skill-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 20px;
+      cursor: pointer;
+      transition: transform 0.15s, border-color 0.15s;
+    }
+
+    .skill-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .skill-card.active {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px var(--primary);
+    }
+
+    .skill-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .skill-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-bright);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .skill-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+      min-height: 40px;
+    }
+
+    .skill-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-muted);
+      border-top: 1px solid var(--card-border);
+      padding-top: 10px;
+    }
+
+    .main-stage {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 28px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    .stage-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .stage-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-bright);
+    }
+
+    .step-indicator {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .step-pill {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 12px;
+      background: #21262d;
+      color: var(--text-muted);
+    }
+
+    .step-pill.active {
+      background: var(--primary);
+      color: #0d1117;
+    }
+
+    .step-pill.done {
+      background: rgba(63, 185, 80, 0.2);
+      color: var(--green);
+    }
+
+    .prompt-box {
+      background: #0d1117;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 20px;
+      margin: 16px 0;
+      font-size: 17px;
+      line-height: 1.6;
+      color: var(--text-bright);
+    }
+
+    .timer-container {
+      display: none;
+      text-align: center;
+      padding: 24px;
+      background: rgba(88, 166, 255, 0.08);
+      border-radius: 12px;
+      margin: 20px 0;
+      border: 1px dashed var(--primary);
+    }
+
+    .timer-display {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 10px 0;
+    }
+
+    .action-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 9px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #0d1117;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background: #21262d;
+      color: var(--text);
+      border: 1px solid var(--card-border);
+    }
+
+    .btn-secondary:hover {
+      background: #30363d;
+      color: var(--text-bright);
+    }
+
+    .btn-accent {
+      background: var(--accent);
+      color: #0d1117;
+    }
+
+    .btn-green {
+      background: var(--green);
+      color: #0d1117;
+    }
+
+    textarea, input, select {
+      width: 100%;
+      font-family: var(--font);
+      background: #0d1117;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      color: var(--text-bright);
+      padding: 10px 12px;
+      font-size: 14px;
+      margin-top: 6px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 68px;
+    }
+
+    textarea:focus, input:focus, select:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .arch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    @media (max-width: 600px) {
+      .arch-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .arch-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .arch-card h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-bright);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .pill-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      padding: 3px 9px;
+      border-radius: 12px;
+      background: rgba(88, 166, 255, 0.15);
+      color: var(--primary);
+      border: 1px solid rgba(88, 166, 255, 0.35);
+    }
+
+    .pill-tag.warn {
+      background: rgba(210, 153, 34, 0.15);
+      color: var(--yellow);
+      border-color: rgba(210, 153, 34, 0.4);
+    }
+
+    .pill-tag.danger {
+      background: rgba(248, 81, 73, 0.15);
+      color: var(--red);
+      border-color: rgba(248, 81, 73, 0.4);
+    }
+
+    .pill-tag.ok {
+      background: rgba(63, 185, 80, 0.15);
+      color: var(--green);
+      border-color: rgba(63, 185, 80, 0.4);
+    }
+
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(115px, 1fr));
+      gap: 10px;
+    }
+
+    .metric-box {
+      background: #0d1117;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .metric-label {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .metric-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-bright);
+      margin-top: 2px;
+    }
+
+    .output-console {
+      background: #0d1117;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    .rsa-orb {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      margin: 8px auto;
+      background: radial-gradient(circle, var(--primary) 0%, rgba(88, 166, 255, 0.15) 75%);
+      border: 2px solid var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--text-bright);
+      transition: transform 1s ease-in-out;
+    }
+
+    .history-section {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .history-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-bright);
+      margin-bottom: 12px;
+    }
+
+    .history-list {
+      list-style: none;
+    }
+
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #21262d;
+      font-size: 14px;
+    }
+
+    .history-item:last-child { border-bottom: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="header-title">
+        <h1>🧠 Mental Skills Playground & Biofeedback Architecture</h1>
+        <p>אימון מנטלי מבוקר, היתוך חיישנים רב-מודאלי, היסק קולי מוגן-פרטיות והיררכיית התערבות בזמן אמת</p>
+      </div>
+      <div class="badge-status">
+        <span class="dot"></span> שרת אופרטיבי (פורט 8010)
+      </div>
+    </header>
+
+    <!-- Skills Overview -->
+    <div class="skills-grid" id="skillsGrid">
+      <div class="skill-card active" onclick="selectSkill('PAUSE', event)">
+        <div class="skill-header">
+          <div class="skill-name">⏸️ השהיית תגובה (Pause)</div>
+        </div>
+        <div class="skill-desc">יצירת מרווח נשימה בין הדחף המיידי לבין הפעולה. עצירה מודעת במצבי אימפולסיביות.</div>
+        <div class="skill-meta">
+          <span>רמת אימון: 1</span>
+          <span>תרגילים פעילים: 2</span>
+        </div>
+      </div>
+
+      <div class="skill-card" onclick="selectSkill('FRUSTRATION_TOLERANCE', event)">
+        <div class="skill-header">
+          <div class="skill-name">🛡️ עמידות בתסכול</div>
+        </div>
+        <div class="skill-desc">שמירה על יציבות כשמשהו משתבש, מתעכב או משתנה במפתיע. התאוששות מהירה והמשך עבודה.</div>
+        <div class="skill-meta">
+          <span>רמת אימון: 1</span>
+          <span>תרגילים פעילים: 2</span>
+        </div>
+      </div>
+
+      <div class="skill-card" onclick="selectSkill('AROUSAL_REGULATION', event)">
+        <div class="skill-header">
+          <div class="skill-name">🫁 ויסות עוררות גופנית</div>
+        </div>
+        <div class="skill-desc">זיהוי מוקדם של מתח בגוף, דופק מהיר או נשימה שטחית, והורדת עוררות באמצעות נשימה.</div>
+        <div class="skill-meta">
+          <span>רמת אימון: 1</span>
+          <span>תרגילים פעילים: 2</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Training Stage -->
+    <div class="main-stage" id="mainStage">
+      <div class="stage-header">
+        <div>
+          <div class="stage-title" id="stageTitle">🎯 תרגיל מומלץ: השהיית 3 שניות (Wait Three Seconds)</div>
+          <div id="exerciseTabs" style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;"></div>
+        </div>
+        <div class="step-indicator">
+          <span class="step-pill active" id="pill1">1. תרחיש בסיס</span>
+          <span class="step-pill" id="pill2">2. מיקרו-מיומנות</span>
+          <span class="step-pill" id="pill3">3. בדיקה חוזרת</span>
+          <span class="step-pill" id="pill4">4. משוב וסיום</span>
+        </div>
+      </div>
+
+      <div id="stepContent">
+        <p style="color: var(--text-muted); font-size: 14px;" id="stepSubheader">תרחיש פתיחה (Baseline):</p>
+        <div class="prompt-box" id="scenarioPrompt">
+          מגיעה הודעה שמרגישה טיפה לא הוגנת או מעצבנת. מה הדחף האוטומטי הראשון שלך?
+        </div>
+
+        <label style="font-size: 14px; color: var(--text-muted);" id="userInputLabel">מה האימפולס או התגובה הראשונית שעולה בך?</label>
+        <textarea id="userInput" placeholder="למשל: לרשום תשובה חריפה מיד, לסגור את המסך בכעס, להרגיש כיווץ בבטן..."></textarea>
+
+        <div class="timer-container" id="timerBox">
+          <div style="font-size: 16px; font-weight: 600; color: var(--text-bright);" id="timerInstructions">
+            עצור הכל. שקט מוחלט ל-3 שניות. אל תגע במקלדת:
+          </div>
+          <div class="timer-display" id="timerDisplay">03</div>
+        </div>
+
+        <div class="action-group">
+          <button class="btn-primary" id="nextBtn" onclick="nextStep()">המשך למיקרו-מיומנות ➔</button>
+          <button class="btn-secondary" id="switchExBtn" onclick="switchExercise()">🔄 החלף לתרגיל הבא בקטגוריה</button>
+          <button class="btn-secondary" onclick="resetExercise()">אפס שלבים</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Architecture & Enhancement Plan: 4 Core Subsystems -->
+    <div class="arch-grid">
+      <!-- 1. Multimodal Sensor Fusion -->
+      <div class="arch-card">
+        <h2>
+          <span>⌚ 1. Multimodal Sensor Fusion & Exertion Gate</span>
+          <span class="pill-tag ok" id="sensorGateBadge">GATE: READY</span>
+        </h2>
+        <p style="font-size: 13px; color: var(--text-muted);">
+          היתוך מדדי שעון חכם (HR, HRV rMSSD/SDNN, PPG, טמפ' עור, EDA/GSR) עם סינון מאמץ גופני (&gt;1.2 METs) ובסיס צירקדי מתגלגל ל-7 ימים.
+        </p>
+
+        <div class="metrics-row">
+          <div class="metric-box">
+            <div class="metric-label">HR / HRV rMSSD</div>
+            <div class="metric-val" id="mHrHrv">82 bpm / 38.5 ms</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">EDA / Skin Temp</div>
+            <div class="metric-val" id="mEdaTemp">2.1 µS / 33.4°</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Motion (METs)</div>
+            <div class="metric-val" id="mMets">0.95 METs</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">7d Baseline p50</div>
+            <div class="metric-val" id="mBaseline">44.0 ms</div>
+          </div>
+        </div>
+
+        <div class="action-group">
+          <button class="btn-green" id="fitbitBleBtn" onclick="connectFitbitCharge6Ble()">📡 חבר Fitbit Charge 6 חי (Bluetooth)</button>
+          <button class="btn-secondary" onclick="simulateBiometrics('calm')">מצב מנוחה רגוע</button>
+          <button class="btn-secondary" onclick="simulateBiometrics('drift')">סטייה פיזיולוגית מוקדמת</button>
+          <button class="btn-primary" onclick="simulateBiometrics('surge')">זינוק סימפתטי (&gt;20% HRV Drop)</button>
+          <button class="btn-secondary" onclick="simulateBiometrics('exertion')">הליכה/אימון (&gt;1.2 METs Gate)</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; align-items: end;">
+          <div>
+            <label style="font-size: 12px; color: var(--green); font-weight: 700;">❤️ דופק חי מ-Charge 6 (BPM):</label>
+            <input id="manualHrInput" type="number" min="45" max="195" step="1" value="82" oninput="onManualFitbitInput()" />
+          </div>
+          <div>
+            <label style="font-size: 12px; color: var(--text-muted);">סליידר דופק מהיר (50–160):</label>
+            <input id="manualHrSlider" type="range" min="50" max="160" step="1" value="82" oninput="document.getElementById('manualHrInput').value=this.value; onManualFitbitInput();" />
+          </div>
+          <div>
+            <label style="font-size: 12px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
+              <span id="edaInputLabel">EDA (µS — מוערך מדופק):</span>
+              <span style="font-size: 11px; color: var(--accent); cursor: pointer;" onclick="toggleEdaLock()" id="edaModeToggle" title="לחץ כדי לנעול ערך ידני מסריקת EDA בצמיד">🔓 אוטומטי</span>
+            </label>
+            <input id="manualEdaInput" type="number" step="0.1" value="2.1" oninput="onManualEdaOverride()" />
+          </div>
+          <div>
+            <label style="font-size: 12px; color: var(--text-muted);">טמפ' עור מ-Fitbit (°C):</label>
+            <input id="manualTempInput" type="number" step="0.1" value="33.4" oninput="onManualFitbitInput()" />
+          </div>
+          <div>
+            <label style="font-size: 12px; color: var(--text-muted);">HRV בסיס מ-Fitbit (ms):</label>
+            <input id="manualHrvInput" type="number" step="1" value="44" oninput="onManualFitbitInput()" />
+          </div>
+        </div>
+
+        <div class="output-console" id="biometricOutput">
+          בחר מצב פיזיולוגי כדי להזרים טלמטריה אל <code>POST /api/msp/biometrics/telemetry</code>.
+        </div>
+      </div>
+
+      <!-- 2. Tiered Audio Inference & Privacy Protection -->
+      <div class="arch-card">
+        <h2>
+          <span>🎙️ 2. Edge-Gated Ring-Buffer & Affective Audio</span>
+          <span class="pill-tag" id="audioBufferBadge">DORMANT_LOCAL_RING_BUFFER</span>
+        </h2>
+        <p style="font-size: 13px; color: var(--text-muted);">
+          דגימת 5–10 שניות נפתחת אך ורק בזינוק סימפתטי חד (ירידת HRV &gt;20% ללא מאמץ גופני). חילוץ F0/Jitter/עוצמה מקומי ומחיקת באפר מיידית (0 בייטים נשמרים).
+        </p>
+
+        <div class="action-group">
+          <button class="btn-green" id="liveMicBtn" onclick="captureLiveEdgeAudio5s()">🎤 דגום 5 שניות חיות מהמיקרופון (מיידי + מחיקת באפר)</button>
+          <button class="btn-secondary" onclick="simulateAudioInference('withdrawal')">נסיגה פסיבית / עלבון (Low Vol + Flat F0)</button>
+          <button class="btn-primary" onclick="simulateAudioInference('escalation')">הסלמה מילולית מוחצנת (High Vol + Fast)</button>
+          <button class="btn-secondary" onclick="simulateAudioInference('calm')">דיבור מווסת ויציב</button>
+        </div>
+
+        <div class="output-console" id="audioOutput">
+          סטטוס פרטיות: <code>raw_buffer_purged: true | raw_bytes_retained: 0</code>. לחץ לבדיקת סיווג אפקטיבי (<code>POST /api/msp/audio/infer</code>).
+        </div>
+      </div>
+
+      <!-- 3. Real-Time Intervention Hierarchy -->
+      <div class="arch-card">
+        <h2>
+          <span>⚡ 3. Real-Time Intervention Hierarchy (L1–L3)</span>
+          <span class="pill-tag ok" id="interventionBadge">LEVEL 0</span>
+        </h2>
+        <p style="font-size: 13px; color: var(--text-muted);">
+          רמה 1: מיקרו-הפטיקה בשעון (ללא היסח דעת) | רמה 2: רמז בהפסקת דיבור | רמה 3: תחקור קוגניטיבי 3–5 דקות לאחר האירוע עם תחילת התאוששות.
+        </p>
+
+        <div class="action-group">
+          <button class="btn-secondary" onclick="triggerIntervention(1)">בדוק Level 1 (Micro-Haptics)</button>
+          <button class="btn-primary" onclick="triggerIntervention(2)">בדוק Level 2 (Conversational Pause Cue)</button>
+          <button class="btn-accent" onclick="triggerIntervention(3)">בדוק Level 3 (Post-Event 3-5m Debrief)</button>
+        </div>
+
+        <div class="output-console" id="interventionOutput">
+          הפעל הערכת התערבות בזמן אמת מול <code>POST /api/msp/interventions/evaluate</code>.
+        </div>
+      </div>
+
+      <!-- 4. Closed-Loop Biofeedback Simulation & RSA Guided Imagery -->
+      <div class="arch-card">
+        <h2>
+          <span>🔄 4. Closed-Loop DDA Roleplay & Breathing Pacer</span>
+          <span class="pill-tag" id="ddaBadge">DDA Level 1</span>
+        </h2>
+        <p style="font-size: 13px; color: var(--text-muted);">
+          סימולציית קונפליקט מתכווננת ביולוגית (DDA) + תרגילי נשימה מכוילים פיזיולוגית (כולל 4-7-8 עם החזקת אוויר ונשיפה מהפה, תהודת 0.1 Hz RSA ונשימת קופסה).
+        </p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <select id="roleplayScenario">
+            <option value="interpersonal_conflict">עימות בין-אישי (Interpersonal Conflict)</option>
+            <option value="boundary_negotiation">הצבת גבולות (Boundary Negotiation)</option>
+            <option value="social_friction">חיכוך חברתי (Social Friction)</option>
+          </select>
+          <input id="roleplayInput" type="text" placeholder="תגובתך בסימולציה..." value="אני שומע את הדחיפות, בוא נגדיר סדר עדיפויות ברור." />
+        </div>
+
+        <div>
+          <label style="font-size: 12px; color: var(--text-muted);">🫁 בחר תרגיל נשימה להרגעת מערכת העצבים (Vagus Nerve / RSA):</label>
+          <select id="breathingProtocolSelect" onchange="onBreathingProtocolChange()">
+            <option value="4_7_8">נשימת 4-7-8: שאיפה מהאף (4ש') ➔ החזקת אוויר (7ש') ➔ נשיפה דרך הפה (8ש')</option>
+            <option value="rsa_4_6">תהודת לב-נשימה 0.1 Hz RSA: שאיפה (4ש') ➔ נשיפה רכה (6ש') — 6 נשימות/דקה</option>
+            <option value="box_4_4_4_4">נשימת קופסה (Box 4-4-4-4): שאיפה (4ש') ➔ החזקה (4ש') ➔ נשיפה (4ש') ➔ החזקה (4ש')</option>
+            <option value="sigh_3_1_6">אנחה פיזיולוגית (Physiological Sigh): שאיפה כפולה (3ש') ➔ החזקה (1ש') ➔ נשיפה מהפה (6ש')</option>
+          </select>
+        </div>
+
+        <div class="action-group">
+          <button class="btn-primary" onclick="runRoleplayTurn()">שלח תגובה לסימולציית DDA</button>
+          <button class="btn-green" onclick="toggleRsaPacer()" id="rsaBtn">הפעל קוצב נשימה (4-7-8)</button>
+          <button class="btn-secondary" onclick="calibrateRsaSession()">חשב ציון התאוששות אוטונומית</button>
+        </div>
+
+        <div class="rsa-orb" id="rsaOrb" style="width: 110px; height: 110px; text-align: center; padding: 6px; font-size: 12px;">4-7-8 מוכן</div>
+
+        <div class="output-console" id="biofeedbackOutput">
+          סימולציית ביופידבק בחוג סגור מוכנה.
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent History -->
+    <div class="history-section">
+      <div class="history-title">📊 היסטוריית אימונים אחרונים</div>
+      <ul class="history-list" id="historyList">
+        <li class="history-item">
+          <span>אימון ויסות עוררות (נשיפת שחרור)</span>
+          <span style="color: var(--green);">הושלם בהצלחה (דירוג 2/2)</span>
+        </li>
+        <li class="history-item">
+          <span>תרגול השהיית תגובה (3 שניות שקט)</span>
+          <span style="color: var(--green);">הושלם בהצלחה (דירוג 2/2)</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    let currentStep = 1;
+    let selectedSkill = 'PAUSE';
+    let timerInterval = null;
+    let lastBiometricState = {
+      hr_bpm: 72,
+      hrv_rmssd_ms: 44,
+      hrv_drop_pct: 0,
+      sympathetic_surge: false,
+      exertion_gated: false,
+      affective_state: 'REGULATED_CALM_SPEECH',
+      dda_difficulty: 1
+    };
+    let rsaInterval = null;
+    let rsaTick = 0;
+
+    const EXERCISES = {
+      'PAUSE': [
+        {
+          id: 'pause_wait_three_seconds',
+          title: 'השהיית תגובה – 3 שניות שקט',
+          baseline: 'מגיעה הודעה שמרגישה טיפה לא הוגנת או מעצבנת. מה הדחף האוטומטי הראשון שלך?',
+          inputLabel: 'מה האימפולס או התגובה הראשונית שעולה בך?',
+          placeholder: 'למשל: לרשום תשובה חריפה מיד, לסגור את המסך בכעס, להרגיש כיווץ בבטן...',
+          micro: 'המיקרו-מיומנות: עצירה מוחלטת של 3 שניות לפני כל נגיעה במקלדת. שאיפה אחת עמוקה.',
+          timerText: '⏸️ עצור הכל. שקט מוחלט ל-3 שניות. אל תגע במקלדת:',
+          timerSecs: 3,
+          retest: 'מגיעה הודעה מעצבנת נוספת. הפעל את הטיימר ל-3 שניות, עצור, ורק אז רשום תגובה שקולה ומדויקת.',
+        },
+        {
+          id: 'pause_procrastination_urge',
+          title: 'גלישת דחפים – עצירת דחיינות של 10 שניות (Urge Surfing)',
+          baseline: 'אתה מתחיל משימה מורכבת ומיד עולה דחף לפתוח לשונית חדשה או לבדוק את הטלפון. מה קורה בגוף ובמחשבה?',
+          inputLabel: 'איזה דחף בריחה או הסחת דעת מופיע כרגע?',
+          placeholder: 'למשל: דחף לבדוק וואטסאפ/מייל, תחושת עייפות פתאומית או רצון לקום מהכיסא...',
+          micro: 'המיקרו-מיומנות: הנחת ידיים על הברכיים, איפוס יציבה וגלישה על הדחף למשך 10 שניות בלי לפעול לפיו.',
+          timerText: '🌊 גלוש על הדחף 10 שניות (ידיים על הברכיים, נשימה רגועה בלי לפתוח לשונית חדשה):',
+          timerSecs: 10,
+          retest: 'הדחף לברוח מופיע שוב. שהה עם הדחף 10 שניות בלי לפעול לפיו, ורשום מה החלטת לעשות כעת.',
+        }
+      ],
+      'FRUSTRATION_TOLERANCE': [
+        {
+          id: 'frustration_changed_instruction',
+          title: 'עמידות בתסכול – הנחיה שהשתנתה באמצע (Exhale Reset)',
+          baseline: 'התחלת משימה לפי הנחיה מסוימת, ופתאום ההנחיה משתנה או שצריך לעשות הכל מהתחלה. מה התגובה הראשונית?',
+          inputLabel: 'איזה תסכול או מחשבה אוטומטית עולים מול השינוי הפתאומי?',
+          placeholder: 'למשל: "איזה בזבוז זמן", כעס על מי ששינה את ההנחיה, רצון לעזוב את המשימה...',
+          micro: 'המיקרו-מיומנות: נשיפת שחרור איטית אחת (Exhale Reset), אמירה פנימית "זה חלק מהתהליך", ובחירת הצעד הבא.',
+          timerText: '🛡️ הוצא נשיפת שחרור ארוכה של 5 שניות ואמור בלב: "זה חלק מהתהליך, מה הצעד הקטן הבא?":',
+          timerSecs: 5,
+          retest: 'ההנחיה משתנה שוב ברגע האחרון. לאחר נשיפת השחרור, רשום מהו הצעד הפרקטי הבא שלך.',
+        },
+        {
+          id: 'frustration_technical_glitch',
+          title: 'עמידות בתסכול – שגיאה טכנית בלתי צפויה (Hands-Off Diagnostic)',
+          baseline: 'סקריפט או מערכת שעבדה מקודם נתקעת וזורקת שגיאה אדומה. מה האימפולס המיידי?',
+          inputLabel: 'מה הדחף האוטומטי שלך מול התקלה הטכנית?',
+          placeholder: 'למשל: ללחוץ שוב ושוב בעצבנות, לשנות 5 דברים במקביל בלי לקרוא את השגיאה...',
+          micro: 'המיקרו-מיומנות: הרמת ידיים מהמקלדת למשך 5 שניות. קריאת רק השורה האחרונה וניסוח השערה אחת.',
+          timerText: '🛠️ הרם ידיים מהמקלדת ל-5 שניות וקרא בשקט רק את שורת השגיאה האחרונה:',
+          timerSecs: 5,
+          retest: 'מופיעה תקלה חדשה. אחרי 5 שניות ללא מקלדת, רשום השערה אחת מסודרת לבדיקה.',
+        }
+      ],
+      'AROUSAL_REGULATION': [
+        {
+          id: 'arousal_notice_exhale',
+          title: 'ויסות עוררות גופנית – סריקת גוף ונשיפת שחרור (6 שניות)',
+          baseline: 'עצור לרגע ובדוק: מה קורה בגוף שלך כרגע? (כתפיים מכווצות? נשימה קצרה? מתח בלסת?)',
+          inputLabel: 'איפה בגוף אתה מזהה כרגע מתח או עוררות?',
+          placeholder: 'למשל: כתפיים מורמות, לסת נעולה, נשימה שטחית בחזה, דופק מורגש...',
+          micro: 'המיקרו-מיומנות: נשיפה איטית וממושכת דרך הפה (כאילו מכבים נר לאט) למשך 6 שניות והורדת כתפיים מודעת.',
+          timerText: '🫁 נשוף לאט דרך הפה למשך 6 שניות ושמוט כתפיים כלפי מטה:',
+          timerSecs: 6,
+          retest: 'אחרי הנשיפה הממושכת והורדת הכתפיים — מה השתנה בתחושת הגוף, אפילו ב-10%?',
+        },
+        {
+          id: 'arousal_box_breathing',
+          title: 'ויסות עוררות גופנית – נשימת ריבוע (Box Breathing 4-4-4-4)',
+          baseline: 'אתה מרגיש אי-שקט או קצב לב מעט מוגבר לפני משימה או שיחה. כמה רמת העוררות מ-1 עד 5?',
+          inputLabel: 'דרג את רמת העוררות הנוכחית שלך (1–5) ומה מורגש בגוף:',
+          placeholder: 'למשל: עוררות 4 מתוך 5, דופק מהיר וקושי להתרכז לפני שיחה חשובה...',
+          micro: 'המיקרו-מיומנות: מחזור נשימת ריבוע של 16 שניות — 4 שניות שאיפה, 4 עצירה, 4 נשיפה, 4 עצירה.',
+          timerText: '🔲 מחזור נשימת ריבוע (16 שניות): 4 שאיפה ➔ 4 החזקה ➔ 4 נשיפה ➔ 4 החזקה:',
+          timerSecs: 16,
+          retest: 'סיימת מחזור נשימת ריבוע. דרג כעת מחדש את רמת העוררות מ-1 עד 5.',
+        }
+      ]
+    };
+
+    let activeExerciseIndex = 0;
+    let activeEx = EXERCISES['PAUSE'][0];
+
+    function selectSkill(skillKey, ev) {
+      selectedSkill = skillKey;
+      activeExerciseIndex = 0;
+      document.querySelectorAll('.skill-card').forEach(card => card.classList.remove('active'));
+      if (ev && ev.currentTarget) {
+        ev.currentTarget.classList.add('active');
+      }
+      activeEx = EXERCISES[skillKey][0];
+      resetExercise();
+    }
+
+    function selectExerciseByIndex(idx) {
+      const list = EXERCISES[selectedSkill] || EXERCISES['PAUSE'];
+      activeExerciseIndex = idx % list.length;
+      activeEx = list[activeExerciseIndex];
+      resetExercise();
+    }
+
+    function switchExercise() {
+      const list = EXERCISES[selectedSkill] || EXERCISES['PAUSE'];
+      activeExerciseIndex = (activeExerciseIndex + 1) % list.length;
+      activeEx = list[activeExerciseIndex];
+      resetExercise();
+    }
+
+    function resetExercise() {
+      currentStep = 1;
+      document.getElementById('userInput').value = '';
+      document.getElementById('timerBox').style.display = 'none';
+      clearInterval(timerInterval);
+      const nextBtn = document.getElementById('nextBtn');
+      if (nextBtn) nextBtn.disabled = false;
+      updateUI();
+    }
+
+    function updateUI() {
+      for (let i = 1; i <= 4; i++) {
+        const pill = document.getElementById('pill' + i);
+        pill.className = 'step-pill';
+        if (i < currentStep) pill.classList.add('done');
+        else if (i === currentStep) pill.classList.add('active');
+      }
+
+      const list = EXERCISES[selectedSkill] || EXERCISES['PAUSE'];
+      document.getElementById('stageTitle').innerText = `🎯 תרגיל (${activeExerciseIndex + 1}/${list.length}): ${activeEx.title}`;
+
+      const tabsEl = document.getElementById('exerciseTabs');
+      if (tabsEl) {
+        tabsEl.innerHTML = list.map((ex, idx) =>
+          `<button type="button" class="${idx === activeExerciseIndex ? 'btn-primary' : 'btn-secondary'}" style="padding: 5px 12px; font-size: 12px;" onclick="selectExerciseByIndex(${idx})">` +
+          `תרגיל ${idx + 1}: ${ex.title}</button>`
+        ).join('');
+      }
+
+      const switchBtn = document.getElementById('switchExBtn');
+      if (switchBtn && list.length > 1) {
+        const nextIdx = (activeExerciseIndex + 1) % list.length;
+        switchBtn.innerText = `🔄 עבור לתרגיל ${nextIdx + 1}: ${list[nextIdx].title}`;
+      }
+
+      const promptBox = document.getElementById('scenarioPrompt');
+      const nextBtn = document.getElementById('nextBtn');
+      const timerBox = document.getElementById('timerBox');
+      const timerInstructions = document.getElementById('timerInstructions');
+      const stepSubheader = document.getElementById('stepSubheader');
+      const userInputLabel = document.getElementById('userInputLabel');
+      const userInput = document.getElementById('userInput');
+
+      if (timerInstructions && activeEx.timerText) {
+        timerInstructions.innerText = activeEx.timerText;
+      }
+      if (userInputLabel && activeEx.inputLabel) {
+        userInputLabel.innerText = activeEx.inputLabel;
+      }
+      if (userInput && activeEx.placeholder) {
+        userInput.placeholder = activeEx.placeholder;
+      }
+
+      if (currentStep === 1) {
+        if (stepSubheader) stepSubheader.innerText = 'שלב 1 — תרחיש פתיחה (Baseline):';
+        promptBox.innerText = activeEx.baseline;
+        nextBtn.innerText = 'המשך למיקרו-מיומנות ➔';
+        timerBox.style.display = 'none';
+      } else if (currentStep === 2) {
+        if (stepSubheader) stepSubheader.innerText = 'שלב 2 — תרגול מיקרו-מיומנות עם טיימר:';
+        promptBox.innerText = activeEx.micro;
+        nextBtn.innerText = `הפעל טיימר לתרגול (${activeEx.timerSecs} שניות) ⏱️`;
+        timerBox.style.display = 'block';
+        document.getElementById('timerDisplay').innerText = String(activeEx.timerSecs).padStart(2, '0');
+      } else if (currentStep === 3) {
+        if (stepSubheader) stepSubheader.innerText = 'שלב 3 — בדיקה חוזרת לאחר הוויסות (Retest):';
+        promptBox.innerText = activeEx.retest;
+        nextBtn.innerText = 'סכם אימון ורשום ב-DB ➔';
+        timerBox.style.display = 'none';
+      } else if (currentStep === 4) {
+        if (stepSubheader) stepSubheader.innerText = 'שלב 4 — סיכום ומשוב:';
+        promptBox.innerHTML = `🎉 <strong>התרגיל "${activeEx.title}" הושלם בהצלחה!</strong><br>המיומנות נרשמה במערכת. תוכל לעבור לתרגיל הבא או לקטגוריה אחרת.`;
+        nextBtn.innerText = 'התחל אימון נוסף 🔄';
+        timerBox.style.display = 'none';
+      }
+    }
+
+    function nextStep() {
+      if (currentStep === 2 && document.getElementById('timerDisplay').innerText !== '00') {
+        startTimer(activeEx.timerSecs);
+        return;
+      }
+
+      if (currentStep === 4) {
+        resetExercise();
+        return;
+      }
+
+      currentStep++;
+      updateUI();
+
+      if (currentStep === 4) {
+        saveSessionToBackend();
+      }
+    }
+
+    function startTimer(duration) {
+      let timeLeft = duration;
+      const display = document.getElementById('timerDisplay');
+      const nextBtn = document.getElementById('nextBtn');
+      nextBtn.disabled = true;
+      nextBtn.innerText = 'מתרגל עכשיו...';
+
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        display.innerText = String(timeLeft).padStart(2, '0');
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          display.innerText = '00';
+          nextBtn.disabled = false;
+          nextBtn.innerText = 'המשך לבדיקה חוזרת (Retest) ➔';
+          currentStep = 3;
+          updateUI();
+        }
+      }, 1000);
+    }
+
+    async function saveSessionToBackend() {
+      try {
+        const resp = await fetch('/api/msp/sessions/start', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            idempotency_key: 'ui-' + Date.now(),
+            user_id: 'moshe',
+            skill_id: selectedSkill,
+            exercise_id: activeEx.id,
+            difficulty: 1
+          })
+        });
+        const data = await resp.json();
+        console.log('Session saved to MSP:', data);
+      } catch (err) {
+        console.warn('Backend save notice:', err);
+      }
+    }
+
+    // --- Resilient Biometric Ingestion Helper (API + Instant Local Fallback) ---
+    function evaluateBiometricsLocally(payload) {
+      const ax = payload.accel_x_g ?? 0.02;
+      const ay = payload.accel_y_g ?? 0.01;
+      const az = payload.accel_z_g ?? 1.00;
+      const vm = Math.sqrt(ax * ax + ay * ay + az * az);
+      const dynamicG = Math.max(0.0, Math.abs(vm - 1.0));
+      const estimatedMets = Number((0.9 + dynamicG * 4.5).toFixed(2));
+      const exertionGated = estimatedMets > 1.2;
+
+      const baselineRmssd = 44.0;
+      const hrvDropPct = Number((((baselineRmssd - payload.hrv_rmssd_ms) / baselineRmssd) * 100.0).toFixed(1));
+      const sympatheticSurge = (!exertionGated) && hrvDropPct > 20.0 && (payload.hr_bpm >= 78 || payload.eda_microsiemens >= 3.5);
+      const earlyDrift = (!exertionGated) && (!sympatheticSurge) && (hrvDropPct >= 10.0 || payload.eda_microsiemens >= 3.0);
+
+      return {
+        telemetry: {
+          hr_bpm: payload.hr_bpm,
+          hrv_rmssd_ms: payload.hrv_rmssd_ms,
+          eda_microsiemens: payload.eda_microsiemens ?? 2.1,
+          skin_temp_c: payload.skin_temp_c ?? 33.4
+        },
+        exertion_gate: {
+          estimated_mets: estimatedMets,
+          exertion_gated: exertionGated
+        },
+        circadian_baseline: {
+          circadian_slot: 'daytime',
+          adjusted_hrv_rmssd_baseline_ms: baselineRmssd
+        },
+        autonomic_evaluation: {
+          hrv_drop_pct: hrvDropPct,
+          sympathetic_surge: sympatheticSurge,
+          early_physiological_drift: earlyDrift
+        },
+        edge_audio_ring_buffer_trigger: sympatheticSurge
+      };
+    }
+
+    async function ingestAndRenderBiometrics(payload, sourceLabel = null) {
+      // 1. Render immediately using local calculation so UI NEVER freezes or fails
+      let data = evaluateBiometricsLocally(payload);
+      renderBiometricDataToDom(data, sourceLabel);
+
+      // 2. Also sync with FastAPI backend if endpoint is available
+      try {
+        const resp = await fetch('/api/msp/biometrics/telemetry', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (resp.ok) {
+          const serverData = await resp.json();
+          if (serverData && serverData.telemetry) {
+            data = serverData;
+            renderBiometricDataToDom(data, sourceLabel);
+          }
+        }
+      } catch (err) {
+        console.warn('Using local biometric fusion fallback:', err);
+      }
+      return data;
+    }
+
+    function renderBiometricDataToDom(data, sourceLabel = null) {
+      document.getElementById('mHrHrv').innerText = `${data.telemetry.hr_bpm} bpm / ${data.telemetry.hrv_rmssd_ms} ms`;
+      document.getElementById('mEdaTemp').innerText = `${data.telemetry.eda_microsiemens} µS / ${data.telemetry.skin_temp_c}°`;
+      document.getElementById('mMets').innerText = `${data.exertion_gate.estimated_mets} METs`;
+      document.getElementById('mBaseline').innerText = `${data.circadian_baseline.adjusted_hrv_rmssd_baseline_ms} ms`;
+
+      const badge = document.getElementById('sensorGateBadge');
+      if (data.exertion_gate.exertion_gated) {
+        badge.className = 'pill-tag warn';
+        badge.innerText = 'EXERTION GATED (>1.2 METs)';
+      } else if (data.autonomic_evaluation.sympathetic_surge) {
+        badge.className = 'pill-tag danger';
+        badge.innerText = 'SYMPATHETIC SURGE';
+      } else if (data.autonomic_evaluation.early_physiological_drift) {
+        badge.className = 'pill-tag warn';
+        badge.innerText = 'EARLY DRIFT';
+      } else {
+        badge.className = 'pill-tag ok';
+        badge.innerText = 'REGULATED';
+      }
+
+      lastBiometricState.hr_bpm = data.telemetry.hr_bpm;
+      lastBiometricState.hrv_rmssd_ms = data.telemetry.hrv_rmssd_ms;
+      lastBiometricState.hrv_drop_pct = data.autonomic_evaluation.hrv_drop_pct;
+      lastBiometricState.sympathetic_surge = data.autonomic_evaluation.sympathetic_surge;
+      lastBiometricState.exertion_gated = data.exertion_gate.exertion_gated;
+
+      const prefix = sourceLabel ? `📡 <strong>${sourceLabel}:</strong> ` : `<strong>תוצאת היתוך חיישנים:</strong> `;
+      document.getElementById('biometricOutput').innerHTML =
+        `${prefix}דופק: <code>${data.telemetry.hr_bpm} bpm</code> | HRV: <code>${data.telemetry.hrv_rmssd_ms} ms</code> | ` +
+        `ירידת HRV מול בסיס: <code>${data.autonomic_evaluation.hrv_drop_pct}%</code> | ` +
+        `סינון מאמץ גופני: <code>${data.exertion_gate.exertion_gated ? 'פעיל — התראות דחק מושתקות' : 'כבוי'}</code> | ` +
+        `טריגר טבעת אודיו: <code>${data.edge_audio_ring_buffer_trigger ? 'מופעל (5-10s)' : 'רדום'}</code>`;
+    }
+
+    window.manualEdaLocked = false;
+
+    function toggleEdaLock(forceLock) {
+      window.manualEdaLocked = typeof forceLock === 'boolean' ? forceLock : !window.manualEdaLocked;
+      const toggleEl = document.getElementById('edaModeToggle');
+      const labelEl = document.getElementById('edaInputLabel');
+      if (window.manualEdaLocked) {
+        if (toggleEl) {
+          toggleEl.innerText = '🔒 ידני (נעול)';
+          toggleEl.style.color = 'var(--green)';
+        }
+        if (labelEl) labelEl.innerText = 'EDA ידני מהצמיד (µS):';
+      } else {
+        if (toggleEl) {
+          toggleEl.innerText = '🔓 אוטומטי';
+          toggleEl.style.color = 'var(--accent)';
+        }
+        if (labelEl) labelEl.innerText = 'EDA (µS — מוערך מדופק):';
+      }
+    }
+
+    function onManualEdaOverride() {
+      toggleEdaLock(true);
+      onManualFitbitInput();
+    }
+
+    function onManualFitbitInput() {
+      const hrVal = parseFloat(document.getElementById('manualHrInput').value) || 82.0;
+      const slider = document.getElementById('manualHrSlider');
+      if (slider && slider.value != hrVal) slider.value = hrVal;
+      const edaVal = parseFloat(document.getElementById('manualEdaInput').value) || 2.1;
+      const tempVal = parseFloat(document.getElementById('manualTempInput').value) || 33.4;
+      const baseHrvVal = parseFloat(document.getElementById('manualHrvInput').value) || 44.0;
+      // Dynamically couple HRV rMSSD to HR elevation when adjusted manually
+      const effectiveHrv = Number(Math.max(16.0, baseHrvVal - Math.max(0.0, (hrVal - 70.0) * 0.55)).toFixed(1));
+
+      ingestAndRenderBiometrics({
+        user_id: 'moshe',
+        hr_bpm: hrVal,
+        hrv_rmssd_ms: effectiveHrv,
+        hrv_sdnn_ms: Number((effectiveHrv * 1.18).toFixed(1)),
+        ppg_sqi: 0.96,
+        skin_temp_c: tempVal,
+        eda_microsiemens: edaVal,
+        accel_x_g: 0.02,
+        accel_y_g: 0.01,
+        accel_z_g: 1.00
+      }, 'סנכרון חי מ-Fitbit Charge 6');
+    }
+
+    // --- Live Fitbit Charge 6 Web Bluetooth (HR on Equipment 0x180D + Auto-Reconnect) ---
+    window.fitbitBleDevice = null;
+    window.fitbitBleServer = null;
+    window.fitbitBleService = null;
+    window.fitbitHrCharacteristic = null;
+    let liveRrHistoryMs = [];
+    let blePacketCount = 0;
+    let bleWatchdogTimer = null;
+    let bleKeepAliveTimer = null;
+    let bleReconnectAttempts = 0;
+    let lastBleIngestMs = 0;
+
+    async function subscribeToCharge6Hr() {
+      const out = document.getElementById('biometricOutput');
+      const btn = document.getElementById('fitbitBleBtn');
+
+      window.fitbitBleServer = await window.fitbitBleDevice.gatt.connect();
+      window.fitbitBleService = await window.fitbitBleServer.getPrimaryService('heart_rate');
+      window.fitbitHrCharacteristic = await window.fitbitBleService.getCharacteristic('heart_rate_measurement');
+
+      window.fitbitHrCharacteristic.removeEventListener('characteristicvaluechanged', handleFitbitHrNotification);
+      window.fitbitHrCharacteristic.addEventListener('characteristicvaluechanged', handleFitbitHrNotification);
+      await window.fitbitHrCharacteristic.startNotifications();
+      bleReconnectAttempts = 0;
+
+      // Keep-alive ping every 15s to prevent Windows/Fitbit BLE idle timeout
+      if (bleKeepAliveTimer) clearInterval(bleKeepAliveTimer);
+      bleKeepAliveTimer = setInterval(async () => {
+        try {
+          if (window.fitbitBleDevice && !window.fitbitBleDevice.gatt.connected) {
+            await subscribeToCharge6Hr();
+          }
+        } catch (e) {
+          console.debug('BLE keep-alive check:', e.message);
+        }
+      }, 15000);
+
+      btn.innerText = '⏳ מחובר ל-Charge 6 (ממתין לפעימה...)';
+      out.innerHTML = '🔗 ערוץ הדופק (0x2A37) נפתח! ממתין לחבילת הדופק הראשונה מהצמיד...';
+    }
+
+    async function connectFitbitCharge6Ble() {
+      const out = document.getElementById('biometricOutput');
+      const btn = document.getElementById('fitbitBleBtn');
+      if (!navigator.bluetooth) {
+        out.innerHTML = '⚠️ הדפדפן אינו תומך ב-Web Bluetooth. פתח ב-Chrome או Edge.';
+        return;
+      }
+
+      try {
+        blePacketCount = 0;
+        out.innerHTML = 'בחר את <strong>Charge 6</strong> בחלון הקופץ ולחץ <strong>Pair</strong>...';
+        window.fitbitBleDevice = await navigator.bluetooth.requestDevice({
+          filters: [{ services: ['heart_rate'] }],
+          optionalServices: ['heart_rate', 'battery_service', 'device_information']
+        });
+
+        window.fitbitBleDevice.addEventListener('gattserverdisconnected', async () => {
+          // Automatic reconnection loop so temporary BLE drops recover seamlessly!
+          if (bleReconnectAttempts < 15) {
+            bleReconnectAttempts++;
+            btn.innerText = `🔄 מתחבר מחדש ל-Charge 6 (ניסיון ${bleReconnectAttempts}/15)...`;
+            setTimeout(async () => {
+              try {
+                await subscribeToCharge6Hr();
+              } catch (reErr) {
+                console.warn('Auto-reconnect attempt failed:', reErr.message);
+              }
+            }, 2500);
+          } else {
+            btn.innerText = '📡 חבר מחדש Fitbit Charge 6';
+          }
+        });
+
+        await subscribeToCharge6Hr();
+      } catch (err) {
+        out.innerHTML = `חיבור ה-Bluetooth נכשל או בוטל: <code>${err.message}</code>`;
+      }
+    }
+
+    async function handleFitbitHrNotification(event) {
+      const value = event.target.value;
+      blePacketCount++;
+      const flags = value.getUint8(0);
+      const is16Bit = (flags & 0x01) !== 0;
+      let offset = 1;
+      let hrBpm = is16Bit ? value.getUint16(offset, true) : value.getUint8(offset);
+
+      const btn = document.getElementById('fitbitBleBtn');
+      btn.innerText = `✅ Charge 6 חי: ${hrBpm} BPM (#${blePacketCount})`;
+
+      if (hrBpm > 30) {
+        document.getElementById('manualHrInput').value = hrBpm;
+        const slider = document.getElementById('manualHrSlider');
+        if (slider) slider.value = hrBpm;
+
+        const baseHrv = parseFloat(document.getElementById('manualHrvInput').value) || 44.0;
+        const computedRmssd = Number(Math.max(18.0, baseHrv - Math.max(0.0, (hrBpm - 68.0) * 0.55)).toFixed(1));
+        // If user locked a manual EDA reading from Charge 6 EDA Scan, preserve it; otherwise estimate proxy from HR
+        let dynamicEda = parseFloat(document.getElementById('manualEdaInput').value) || 2.1;
+        if (!window.manualEdaLocked) {
+          dynamicEda = Number(Math.min(9.5, Math.max(1.4, 1.8 + Math.max(0.0, (hrBpm - 66.0) * 0.11))).toFixed(2));
+          document.getElementById('manualEdaInput').value = dynamicEda;
+        }
+        const tempVal = parseFloat(document.getElementById('manualTempInput').value) || 33.4;
+
+        const now = Date.now();
+        if (now - lastBleIngestMs < 2000 && blePacketCount > 1) {
+          // Update local UI every second, throttle DB insert to every 2 seconds
+          const localData = evaluateBiometricsLocally({
+            hr_bpm: hrBpm,
+            hrv_rmssd_ms: computedRmssd,
+            eda_microsiemens: dynamicEda,
+            skin_temp_c: tempVal
+          });
+          renderBiometricDataToDom(localData, `שידור חי מ-Fitbit Charge 6 (חבילה #${blePacketCount})`);
+          return;
+        }
+        lastBleIngestMs = now;
+
+        await ingestAndRenderBiometrics({
+          user_id: 'moshe',
+          hr_bpm: hrBpm,
+          hrv_rmssd_ms: computedRmssd,
+          hrv_sdnn_ms: Number((computedRmssd * 1.18).toFixed(1)),
+          ppg_sqi: 0.96,
+          skin_temp_c: tempVal,
+          eda_microsiemens: dynamicEda,
+          accel_x_g: 0.02,
+          accel_y_g: 0.01,
+          accel_z_g: 1.00
+        }, `שידור חי מ-Fitbit Charge 6 (חבילה #${blePacketCount})`);
+      }
+    }
+
+    // --- Live 5-Second On-Device Microphone Feature Extraction (Zero Retention) ---
+    async function captureLiveEdgeAudio5s() {
+      const out = document.getElementById('audioOutput');
+      const btn = document.getElementById('liveMicBtn');
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        btn.disabled = true;
+        btn.innerText = '🎙️ דוגם קול מקומית (5 שניות)... דבר עכשיו';
+        out.innerHTML = 'דוגם מאפיינים אקוסטיים בזיכרון מקומי (ללא הקלטת מילים)...';
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const source = audioCtx.createMediaStreamSource(stream);
+        const analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 2048;
+        source.connect(analyser);
+
+        const buffer = new Float32Array(analyser.fftSize);
+        const dbSamples = [];
+        const f0Samples = [];
+        let silentFrames = 0;
+        let totalFrames = 0;
+
+        const sampleTimer = setInterval(() => {
+          analyser.getFloatTimeDomainData(buffer);
+          totalFrames++;
+          let sumSq = 0;
+          let zeroCrossings = 0;
+          for (let i = 0; i < buffer.length; i++) {
+            sumSq += buffer[i] * buffer[i];
+            if (i > 0 && ((buffer[i - 1] >= 0 && buffer[i] < 0) || (buffer[i - 1] < 0 && buffer[i] >= 0))) {
+              zeroCrossings++;
+            }
+          }
+          const rms = Math.sqrt(sumSq / buffer.length);
+          const db = Math.max(-55, 20 * Math.log10(Math.max(rms, 0.0001)));
+          dbSamples.push(db);
+
+          if (db < -34) {
+            silentFrames++;
+          } else {
+            dbSamples.push(db);
+            const estFreq = (zeroCrossings * audioCtx.sampleRate) / (2 * buffer.length);
+            const clampedF0 = Math.max(90, Math.min(260, estFreq * 0.22));
+            f0Samples.push(clampedF0);
+          }
+        }, 100);
+
+        setTimeout(async () => {
+          clearInterval(sampleTimer);
+          // Immediately purge raw buffer & stop hardware microphone
+          buffer.fill(0);
+          stream.getTracks().forEach(t => t.stop());
+          await audioCtx.close();
+
+          const avgDb = dbSamples.length ? dbSamples.reduce((a, b) => a + b, 0) / dbSamples.length : -36.0;
+          const avgF0 = f0Samples.length ? f0Samples.reduce((a, b) => a + b, 0) / f0Samples.length : 130.0;
+          const rawF0Var = f0Samples.length > 1
+            ? Math.sqrt(f0Samples.map(x => Math.pow(x - avgF0, 2)).reduce((a, b) => a + b, 0) / f0Samples.length)
+            : 8.0;
+          const f0Var = avgDb <= -26.0 ? Math.min(18.0, rawF0Var * 0.45) : rawF0Var;
+          const pauseRatio = totalFrames ? Number((silentFrames / totalFrames).toFixed(2)) : 0.45;
+          const estWpm = Math.max(65, Math.min(195, Math.round((1 - pauseRatio) * 185)));
+
+          const resp = await fetch('/api/msp/audio/infer', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              user_id: 'moshe',
+              sympathetic_surge_active: true,
+              hrv_drop_pct: Math.max(22.0, lastBiometricState.hrv_drop_pct || 24.0),
+              exertion_gated: false,
+              capture_window_seconds: 5.0,
+              jitter_pct: Number((1.0 + f0Var / 35.0).toFixed(2)),
+              pitch_f0_hz: Number(avgF0.toFixed(1)),
+              pitch_variability_hz: Number(f0Var.toFixed(1)),
+              volume_db_envelope: Number(avgDb.toFixed(1)),
+              speech_rate_wpm: estWpm,
+              pause_ratio: pauseRatio
+            })
+          });
+          const data = await resp.json();
+
+          btn.disabled = false;
+          btn.innerText = '🎤 דגום 5 שניות חיות מהמיקרופון (מיידי + מחיקת באפר)';
+          document.getElementById('audioBufferBadge').innerText = data.affective_state;
+          lastBiometricState.affective_state = data.affective_state;
+
+          out.innerHTML =
+            `🎤 <strong>ניתוח קול חי מהמיקרופון שלך הושלם (הבאפר נמחק מהזיכרון!):</strong><br>` +
+            `סיווג: <code>${data.affective_state}</code> (${data.description_he}) | ` +
+            `עוצמה: <code>${data.extracted_features.volume_db_envelope} dB</code> | ` +
+            `F0: <code>${data.extracted_features.pitch_f0_hz} Hz</code> | ` +
+            `יחס שתיקות: <code>${data.extracted_features.pause_ratio}</code>`;
+        }, 5000);
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerText = '🎤 דגום 5 שניות חיות מהמיקרופון (מיידי + מחיקת באפר)';
+        out.innerHTML = `לא ניתן לגשת למיקרופון: <code>${err.message}</code>`;
+      }
+    }
+
+    // --- Subsystem 1: Multimodal Sensor Fusion ---
+    async function simulateBiometrics(mode) {
+      const presets = {
+        calm: {
+          user_id: 'moshe',
+          hr_bpm: 71.0,
+          hrv_rmssd_ms: 45.0,
+          hrv_sdnn_ms: 52.0,
+          ppg_sqi: 0.96,
+          skin_temp_c: 33.4,
+          eda_microsiemens: 1.9,
+          accel_x_g: 0.01,
+          accel_y_g: 0.01,
+          accel_z_g: 1.00
+        },
+        drift: {
+          user_id: 'moshe',
+          hr_bpm: 81.0,
+          hrv_rmssd_ms: 37.5,
+          hrv_sdnn_ms: 43.0,
+          ppg_sqi: 0.94,
+          skin_temp_c: 33.1,
+          eda_microsiemens: 3.4,
+          accel_x_g: 0.02,
+          accel_y_g: 0.01,
+          accel_z_g: 1.00
+        },
+        surge: {
+          user_id: 'moshe',
+          hr_bpm: 98.0,
+          hrv_rmssd_ms: 28.0,
+          hrv_sdnn_ms: 33.0,
+          ppg_sqi: 0.92,
+          skin_temp_c: 32.7,
+          eda_microsiemens: 6.4,
+          accel_x_g: 0.02,
+          accel_y_g: 0.02,
+          accel_z_g: 1.01
+        },
+        exertion: {
+          user_id: 'moshe',
+          hr_bpm: 118.0,
+          hrv_rmssd_ms: 25.0,
+          hrv_sdnn_ms: 30.0,
+          ppg_sqi: 0.88,
+          skin_temp_c: 34.1,
+          eda_microsiemens: 7.2,
+          accel_x_g: 0.35,
+          accel_y_g: 0.28,
+          accel_z_g: 1.18
+        }
+      };
+
+      const payload = presets[mode];
+      document.getElementById('manualHrInput').value = payload.hr_bpm;
+      document.getElementById('manualHrvInput').value = payload.hrv_rmssd_ms;
+      document.getElementById('manualEdaInput').value = payload.eda_microsiemens;
+      document.getElementById('manualTempInput').value = payload.skin_temp_c;
+      await ingestAndRenderBiometrics(payload);
+    }
+
+    // --- Subsystem 2: Tiered Audio Inference & Privacy Protection ---
+    async function simulateAudioInference(profile) {
+      const profiles = {
+        withdrawal: {
+          user_id: 'moshe',
+          sympathetic_surge_active: true,
+          hrv_drop_pct: 26.5,
+          exertion_gated: false,
+          capture_window_seconds: 6.5,
+          jitter_pct: 1.4,
+          pitch_f0_hz: 122.0,
+          pitch_variability_hz: 7.5,
+          volume_db_envelope: -31.0,
+          speech_rate_wpm: 88.0,
+          pause_ratio: 0.48
+        },
+        escalation: {
+          user_id: 'moshe',
+          sympathetic_surge_active: true,
+          hrv_drop_pct: 31.0,
+          exertion_gated: false,
+          capture_window_seconds: 8.0,
+          jitter_pct: 2.35,
+          pitch_f0_hz: 215.0,
+          pitch_variability_hz: 44.0,
+          volume_db_envelope: -11.5,
+          speech_rate_wpm: 178.0,
+          pause_ratio: 0.14
+        },
+        calm: {
+          user_id: 'moshe',
+          sympathetic_surge_active: true,
+          hrv_drop_pct: 22.0,
+          exertion_gated: false,
+          capture_window_seconds: 6.0,
+          jitter_pct: 0.85,
+          pitch_f0_hz: 145.0,
+          pitch_variability_hz: 19.0,
+          volume_db_envelope: -20.0,
+          speech_rate_wpm: 125.0,
+          pause_ratio: 0.30
+        }
+      };
+
+      const resp = await fetch('/api/msp/audio/infer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(profiles[profile])
+      });
+      const data = await resp.json();
+
+      const badge = document.getElementById('audioBufferBadge');
+      badge.className = 'pill-tag ok';
+      badge.innerText = data.affective_state;
+      lastBiometricState.affective_state = data.affective_state;
+
+      document.getElementById('audioOutput').innerHTML =
+        `<strong>סיווג אפקטיבי:</strong> <code>${data.affective_state}</code> (${data.description_he})<br>` +
+        `<strong>פרטיות קצה:</strong> <code>raw_buffer_purged=${data.privacy_guarantee.raw_buffer_purged}</code> | ` +
+        `<code>raw_bytes_retained=${data.privacy_guarantee.raw_bytes_retained}</code> | ` +
+        `הפסקת דיבור זוהתה: <code>${data.extracted_features.conversational_pause_detected}</code>`;
+    }
+
+    // --- Subsystem 3: Real-Time Intervention Hierarchy ---
+    async function triggerIntervention(level) {
+      let payload = {
+        user_id: 'moshe',
+        hrv_drop_pct: 14.0,
+        sympathetic_surge: false,
+        sustained_arousal_seconds: 10.0,
+        exertion_gated: false,
+        affective_state: 'REGULATED_CALM_SPEECH',
+        conversational_pause_detected: true,
+        minutes_post_incident: 0.0,
+        autonomic_recovery_begun: false
+      };
+
+      if (level === 2) {
+        payload.hrv_drop_pct = 27.0;
+        payload.sympathetic_surge = true;
+        payload.sustained_arousal_seconds = 35.0;
+        payload.affective_state = 'OUTWARD_VERBAL_ESCALATION';
+        payload.conversational_pause_detected = true;
+      } else if (level === 3) {
+        payload.hrv_drop_pct = 10.0;
+        payload.sympathetic_surge = false;
+        payload.minutes_post_incident = 4.0;
+        payload.autonomic_recovery_begun = true;
+      }
+
+      const resp = await fetch('/api/msp/interventions/evaluate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await resp.json();
+
+      const badge = document.getElementById('interventionBadge');
+      badge.innerText = `LEVEL ${data.intervention_level}: ${data.level_name}`;
+      badge.className = data.intervention_level === 2 ? 'pill-tag warn' : 'pill-tag ok';
+
+      let extra = '';
+      if (data.debrief_questions) {
+        extra = `<br><strong>שאלות תחקור קוגניטיבי:</strong> ${data.debrief_questions.join(' | ')}`;
+      }
+      document.getElementById('interventionOutput').innerHTML =
+        `<strong>ערוץ:</strong> <code>${data.modality}</code> | <strong>תבנית הפטית:</strong> <code>${data.haptic_pattern || 'ללא'}</code><br>` +
+        `<strong>הנחיה:</strong> ${data.prompt_text_he}${extra}`;
+    }
+
+    // --- Subsystem 4: Closed-Loop DDA Roleplay & 0.1 Hz RSA Pacer ---
+    async function runRoleplayTurn() {
+      const scenario = document.getElementById('roleplayScenario').value;
+      const userResponse = document.getElementById('roleplayInput').value;
+
+      const resp = await fetch('/api/msp/biofeedback/roleplay/turn', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: 'moshe',
+          scenario_type: scenario,
+          current_difficulty: lastBiometricState.dda_difficulty,
+          user_response: userResponse,
+          hr_bpm: lastBiometricState.hr_bpm,
+          hrv_rmssd_ms: lastBiometricState.hrv_rmssd_ms,
+          eda_microsiemens: 2.5,
+          affective_state: lastBiometricState.affective_state
+        })
+      });
+      const data = await resp.json();
+      lastBiometricState.dda_difficulty = data.next_difficulty;
+
+      document.getElementById('ddaBadge').innerText =
+        `DDA Level ${data.next_difficulty} (Stability ${data.physiological_stability_score})`;
+
+      document.getElementById('biofeedbackOutput').innerHTML =
+        `<strong>כוונון קושי דינמי (DDA):</strong> <code>${data.dda_transition}</code> (רמה ${data.previous_difficulty} ➔ ${data.next_difficulty})<br>` +
+        `<strong>יריב סימולציה:</strong> "${data.adversary_prompt_he}"<br>` +
+        `<strong>משוב מאמן ביופידבק:</strong> ${data.coaching_feedback_he}`;
+    }
+
+    const BREATHING_PROTOCOLS = {
+      '4_7_8': {
+        name: '4-7-8 (ד"ר אנדרו וייל)',
+        cycleSecs: 19,
+        bpm: 3.15,
+        phases: [
+          { endSec: 4, duration: 4, label: 'שאיפה מהאף', scale: 'scale(1.35)', color: 'var(--primary)' },
+          { endSec: 11, duration: 7, label: 'החזק אוויר', scale: 'scale(1.35)', color: 'var(--accent)' },
+          { endSec: 19, duration: 8, label: 'נשיפה דרך הפה', scale: 'scale(0.82)', color: 'var(--green)' }
+        ]
+      },
+      'rsa_4_6': {
+        name: 'תהודת 0.1 Hz RSA (6 נשימות/דקה)',
+        cycleSecs: 10,
+        bpm: 6.0,
+        phases: [
+          { endSec: 4, duration: 4, label: 'שאיפה מהאף', scale: 'scale(1.32)', color: 'var(--primary)' },
+          { endSec: 10, duration: 6, label: 'נשיפה רכה', scale: 'scale(0.85)', color: 'var(--green)' }
+        ]
+      },
+      'box_4_4_4_4': {
+        name: 'נשימת קופסה (Box 4-4-4-4)',
+        cycleSecs: 16,
+        bpm: 3.75,
+        phases: [
+          { endSec: 4, duration: 4, label: 'שאיפה מהאף', scale: 'scale(1.32)', color: 'var(--primary)' },
+          { endSec: 8, duration: 4, label: 'החזק אוויר מלא', scale: 'scale(1.32)', color: 'var(--accent)' },
+          { endSec: 12, duration: 4, label: 'נשיפה דרך הפה', scale: 'scale(0.85)', color: 'var(--green)' },
+          { endSec: 16, duration: 4, label: 'החזק ריאות ריקות', scale: 'scale(0.85)', color: 'var(--yellow)' }
+        ]
+      },
+      'sigh_3_1_6': {
+        name: 'אנחה פיזיולוגית (Physiological Sigh)',
+        cycleSecs: 10,
+        bpm: 6.0,
+        phases: [
+          { endSec: 3, duration: 3, label: 'שאיפה כפולה מהאף', scale: 'scale(1.38)', color: 'var(--primary)' },
+          { endSec: 4, duration: 1, label: 'החזקה קצרה', scale: 'scale(1.38)', color: 'var(--accent)' },
+          { endSec: 10, duration: 6, label: 'נשיפה ארוכה מהפה', scale: 'scale(0.82)', color: 'var(--green)' }
+        ]
+      }
+    };
+
+    function onBreathingProtocolChange() {
+      const key = document.getElementById('breathingProtocolSelect').value;
+      const proto = BREATHING_PROTOCOLS[key];
+      const orb = document.getElementById('rsaOrb');
+      const btn = document.getElementById('rsaBtn');
+      if (!rsaInterval) {
+        orb.innerText = proto.name;
+        btn.innerText = `הפעל קוצב נשימה (${proto.name.split(' ')[0]})`;
+      } else {
+        rsaTick = 0; // Restart cycle immediately with new protocol
+      }
+    }
+
+    function toggleRsaPacer() {
+      const orb = document.getElementById('rsaOrb');
+      const btn = document.getElementById('rsaBtn');
+      const key = document.getElementById('breathingProtocolSelect').value;
+      const proto = BREATHING_PROTOCOLS[key] || BREATHING_PROTOCOLS['4_7_8'];
+
+      if (rsaInterval) {
+        clearInterval(rsaInterval);
+        rsaInterval = null;
+        orb.style.transform = 'scale(1)';
+        orb.style.borderColor = 'var(--primary)';
+        orb.innerText = proto.name;
+        btn.innerText = `הפעל קוצב נשימה (${proto.name.split(' ')[0]})`;
+        return;
+      }
+
+      btn.innerText = `עצור קוצב (${proto.name})`;
+      rsaTick = 0;
+
+      const renderTick = () => {
+        const activeKey = document.getElementById('breathingProtocolSelect').value;
+        const activeProto = BREATHING_PROTOCOLS[activeKey] || BREATHING_PROTOCOLS['4_7_8'];
+        const cycleSec = rsaTick % activeProto.cycleSecs;
+        let prevEnd = 0;
+        for (const phase of activeProto.phases) {
+          if (cycleSec < phase.endSec) {
+            const secsLeft = phase.endSec - cycleSec;
+            orb.style.transform = phase.scale;
+            orb.style.borderColor = phase.color;
+            orb.innerHTML = `${phase.label}<br><strong style="font-size:16px;">${secsLeft}s</strong>`;
+            break;
+          }
+          prevEnd = phase.endSec;
+        }
+        rsaTick++;
+      };
+
+      renderTick();
+      rsaInterval = setInterval(renderTick, 1000);
+    }
+
+    async function calibrateRsaSession() {
+      const protocolKey = document.getElementById('breathingProtocolSelect').value || '4_7_8';
+      const proto = BREATHING_PROTOCOLS[protocolKey] || BREATHING_PROTOCOLS['4_7_8'];
+      const curHr = lastBiometricState.hr_bpm || 71.0;
+      const curHrv = lastBiometricState.hrv_rmssd_ms || 46.0;
+      const initHr = Math.max(curHr + 14.0, 92.0);
+      const initHrv = Math.min(curHrv - 14.0, 27.0);
+
+      const resp = await fetch('/api/msp/biofeedback/imagery/calibrate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: 'moshe',
+          protocol_id: protocolKey,
+          initial_hr_bpm: initHr,
+          current_hr_bpm: curHr,
+          initial_hrv_rmssd_ms: initHrv,
+          current_hrv_rmssd_ms: curHrv,
+          respiration_rate_bpm: proto.bpm,
+          elapsed_seconds: 120.0
+        })
+      });
+      const data = await resp.json();
+      const protoTitle = (data.pacing_protocol && data.pacing_protocol.protocol_name_he) || proto.name;
+      document.getElementById('biofeedbackOutput').innerHTML =
+        `<strong>כיול התאוששות נשימתית (${protoTitle}):</strong> קוהרנטיות קצב: <code>${data.rsa_coherence_score}%</code> | ` +
+        `ציון התאוששות אוטונומית: <code>${data.autonomic_recovery_score}/100</code> | ` +
+        `זמן להגעה לשיווי משקל: <code>${data.time_to_equilibrium_seconds}s</code><br>` +
+        `<strong>הנחיית קצב מותאמת לתרגיל שנבחר:</strong> ${data.pacing_protocol.guidance_he}`;
+    }
+
+    updateUI();
+  </script>
+</body>
+</html>
